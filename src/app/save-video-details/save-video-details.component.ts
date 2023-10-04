@@ -5,6 +5,9 @@ import {map, Observable, startWith} from "rxjs";
 import {LiveAnnouncer} from "@angular/cdk/a11y";
 import {MatChipInputEvent} from "@angular/material/chips";
 import {MatAutocompleteSelectedEvent} from "@angular/material/autocomplete";
+import {ActivatedRoute} from "@angular/router";
+import {VideoService} from "../video.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-save-video-details',
@@ -28,8 +31,14 @@ export class SaveVideoDetailsComponent implements OnInit{
   tagInput!: ElementRef<HTMLInputElement>;
 
   announcer = inject(LiveAnnouncer);
+  selectedFile !: File;
+  selectedFileName = '';
+  videoId = '';
+  fileSelected = false;
 
-  constructor() {
+  constructor(private activeRoute: ActivatedRoute, private videoService: VideoService,
+              private matSnackBar: MatSnackBar) {
+    this.videoId = this.activeRoute.snapshot.params['videoId'];
     this.filteredTags = this.tagCtrl.valueChanges.pipe(
       startWith(null),
       map((tag: string | null) => (tag ? this._filter(tag) : this.allTags.slice())),
@@ -78,5 +87,21 @@ export class SaveVideoDetailsComponent implements OnInit{
     const filterValue = value.toLowerCase();
 
     return this.allTags.filter(v => v.toLowerCase().includes(filterValue));
+  }
+
+  onFileSelected(event: Event) {
+    // @ts-ignore
+    this.selectedFile = event.target.files[0];
+    this.selectedFileName = this.selectedFile.name;
+    this.fileSelected = true;
+  }
+
+  onUpload() {
+    this.videoService.uploadThumbnail(this.selectedFile, this.videoId)
+      .subscribe(data => {
+        console.log(data);
+        // show an upload success notification
+        this.matSnackBar.open("Thumbnail Upload Successful", "OK");
+      })
   }
 }
