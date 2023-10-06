@@ -26,7 +26,7 @@ import {VgBufferingModule} from "@videogular/ngx-videogular/buffering";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import { VideoPlayerComponent } from './video-player/video-player.component';
 import { AuthConfigModule } from './auth/auth-config.module';
-import {AuthInterceptor, AuthModule} from "angular-auth-oidc-client";
+import { AuthInterceptor } from "angular-auth-oidc-client";
 import { VideoDetailComponent } from './video-detail/video-detail.component';
 
 @NgModule({
